@@ -1205,7 +1205,7 @@ class AuthNode extends Service
                         ],
                         [
                             'id' => '5-1-12',
-                            'title' => '开放登录',
+                            'title' => '注册登录',
                             'type' => 'menu',
                             'route' => 'admin.setting.oauth',
                         ],
@@ -1220,6 +1220,12 @@ class AuthNode extends Service
                             'title' => '钉钉机器人',
                             'type' => 'menu',
                             'route' => 'admin.setting.dingtalk_robot',
+                        ],
+                        [
+                            'id' => '5-1-16',
+                            'title' => '联系方式',
+                            'type' => 'menu',
+                            'route' => 'admin.setting.contact',
                         ],
                     ],
                 ],

@@ -55,6 +55,14 @@ class CourseController extends Controller
 
         $course = $service->handle($id);
 
+        if ($course['deleted'] == 1) {
+            $this->notFound();
+        }
+
+        if ($course['published'] == 0) {
+            $this->notFound();
+        }
+
         return $this->jsonSuccess(['course' => $course]);
     }
 
@@ -110,20 +118,6 @@ class CourseController extends Controller
      * @Post("/{id:[0-9]+}/favorite", name="api.course.favorite")
      */
     public function favoriteAction($id)
-    {
-        $service = new CourseFavoriteService();
-
-        $data = $service->handle($id);
-
-        $msg = $data['action'] == 'do' ? '收藏成功' : '取消收藏成功';
-
-        return $this->jsonSuccess(['data' => $data, 'msg' => $msg]);
-    }
-
-    /**
-     * @Post("/{id:[0-9]+}/unfavorite", name="api.course.unfavorite")
-     */
-    public function unfavoriteAction($id)
     {
         $service = new CourseFavoriteService();
 

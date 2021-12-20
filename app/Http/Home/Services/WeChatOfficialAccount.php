@@ -90,6 +90,18 @@ class WeChatOfficialAccount extends Service
 
     protected function handleSubscribeEvent($message)
     {
+        $openId = $message['FromUserName'] ?? '';
+        $eventKey = $message['EventKey'] ?? '';
+
+        /**
+         * 带场景值的关注事件
+         */
+        $userId = str_replace('qrscene_', '', $eventKey);
+
+        if ($userId && $openId) {
+            $this->saveWechatSubscribe($userId, $openId);
+        }
+
         return new TextMessage('开心呀，我们又多了一个小伙伴!');
     }
 
@@ -102,7 +114,8 @@ class WeChatOfficialAccount extends Service
         $subscribe = $subscribeRepo->findByOpenId($openId);
 
         if ($subscribe) {
-            $subscribe->delete();
+            $subscribe->deleted = 1;
+            $subscribe->update();
         }
 
         return new TextMessage('伤心呀，我们又少了一个小伙伴!');
@@ -115,26 +128,10 @@ class WeChatOfficialAccount extends Service
 
         $userId = str_replace('qrscene_', '', $eventKey);
 
-        $userRepo = new UserRepo();
-
-        $user = $userRepo->findById($userId);
-
-        if (!$user) return $this->emptyReply();
-
-        $subscribeRepo = new WeChatSubscribeRepo();
-
-        $subscribe = $subscribeRepo->findByOpenId($openId);
-
-        if ($subscribe) {
-            if ($subscribe->user_id != $userId) {
-                $subscribe->user_id = $userId;
-            }
-            $subscribe->update();
-        } else {
-            $subscribe = new WeChatSubscribeModel();
-            $subscribe->user_id = $userId;
-            $subscribe->open_id = $openId;
-            $subscribe->create();
+        if ($userId && $openId) {
+            $userInfo = $this->getUserInfo($openId);
+            $unionId = $userInfo['unionid'] ?: '';
+            $this->saveWechatSubscribe($userId, $openId, $unionId);
         }
 
         return $this->emptyReply();
@@ -198,6 +195,54 @@ class WeChatOfficialAccount extends Service
     protected function noMatchReply()
     {
         return new TextMessage('没有匹配的服务哦！');
+    }
+
+    protected function saveWechatSubscribe($userId, $openId, $unionId = '')
+    {
+        if (!$userId || !$openId) return;
+
+        $userRepo = new UserRepo();
+
+        $user = $userRepo->findById($userId);
+
+        if (!$user) return;
+
+        $subscribeRepo = new WeChatSubscribeRepo();
+
+        $subscribe = $subscribeRepo->findByOpenId($openId);
+
+        if ($subscribe) {
+            if ($subscribe->user_id != $userId) {
+                $subscribe->user_id = $userId;
+            }
+            if (empty($subscribe->union_id) && !empty($unionId)) {
+                $subscribe->union_id = $unionId;
+            }
+            if ($subscribe->deleted == 1) {
+                $subscribe->deleted = 0;
+            }
+            $subscribe->update();
+        } else {
+            $subscribe = new WeChatSubscribeModel();
+            $subscribe->user_id = $userId;
+            $subscribe->open_id = $openId;
+            $subscribe->union_id = $unionId;
+            $subscribe->create();
+        }
+    }
+
+    protected function getUserInfo($openId)
+    {
+        $app = $this->getOfficialAccount();
+
+        return $app->user->get($openId);
+    }
+
+    protected function getWechatLogger()
+    {
+        $service = new WeChatService();
+
+        return $service->logger;
     }
 
 }

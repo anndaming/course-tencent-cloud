@@ -162,6 +162,10 @@ class Course extends Service
             $data['level'] = $validator->checkLevel($post['level']);
         }
 
+        if (isset($post['fake_user_count'])) {
+            $data['fake_user_count'] = $validator->checkUserCount($post['fake_user_count']);
+        }
+
         if (isset($post['study_expiry'])) {
             $data['study_expiry'] = $validator->checkStudyExpiry($post['study_expiry']);
         }
@@ -385,7 +389,10 @@ class Course extends Service
             }
         }
 
-        $items = $courseRepo->findAll(['published' => 1]);
+        $items = $courseRepo->findAll([
+            'published' => 1,
+            'deleted' => 0,
+        ]);
 
         if ($items->count() == 0) return [];
 
@@ -393,7 +400,7 @@ class Course extends Service
 
         foreach ($items as $item) {
             $result[] = [
-                'name' => sprintf('%s（¥%0.2f）', $item->title, $item->market_price),
+                'name' => sprintf('%s - %s（¥%0.2f）', $item->id, $item->title, $item->market_price),
                 'value' => $item->id,
                 'selected' => in_array($item->id, $courseIds),
             ];

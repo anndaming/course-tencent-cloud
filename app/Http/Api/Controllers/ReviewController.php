@@ -7,6 +7,7 @@
 
 namespace App\Http\Api\Controllers;
 
+use App\Models\Review as ReviewModel;
 use App\Services\Logic\Review\ReviewCreate as ReviewCreateService;
 use App\Services\Logic\Review\ReviewDelete as ReviewDeleteService;
 use App\Services\Logic\Review\ReviewInfo as ReviewInfoService;
@@ -27,6 +28,17 @@ class ReviewController extends Controller
         $service = new ReviewInfoService();
 
         $review = $service->handle($id);
+
+        if ($review['deleted'] == 1) {
+            $this->notFound();
+        }
+
+        $approved = $review['published'] == ReviewModel::PUBLISH_APPROVED;
+        $owned = $review['me']['owned'] == 1;
+
+        if (!$approved && !$owned) {
+            $this->notFound();
+        }
 
         return $this->jsonSuccess(['review' => $review]);
     }
@@ -79,20 +91,6 @@ class ReviewController extends Controller
      * @Post("/{id:[0-9]+}/like", name="api.review.like")
      */
     public function likeAction($id)
-    {
-        $service = new ReviewLikeService();
-
-        $data = $service->handle($id);
-
-        $msg = $data['action'] == 'do' ? '点赞成功' : '取消点赞成功';
-
-        return $this->jsonSuccess(['data' => $data, 'msg' => $msg]);
-    }
-
-    /**
-     * @Post("/{id:[0-9]+}/unlike", name="api.review.unlike")
-     */
-    public function unlikeAction($id)
     {
         $service = new ReviewLikeService();
 

@@ -15,6 +15,11 @@ use App\Services\WeChat as WeChatService;
 class Setting extends Service
 {
 
+    public function getLocalAuthSettings()
+    {
+        return $this->getSettings('oauth.local');
+    }
+
     public function getQQAuthSettings()
     {
         $oauth = $this->getSettings('oauth.qq');
@@ -162,7 +167,8 @@ class Setting extends Service
     public function updateVodSettings($section, $settings)
     {
         if (isset($settings['video_quality'])) {
-            $settings['video_quality'] = kg_json_encode($settings['video_quality']);
+            $data = array_values($settings['video_quality']);
+            $settings['video_quality'] = kg_json_encode($data);
         }
 
         $this->updateSettings($section, $settings);

@@ -14,9 +14,9 @@
         </span>
         <span class="share">
             <a href="javascript:" title="添加好友" class="apply-friend" data-id="{{ user.id }}" data-name="{{ user.name }}" data-avatar="{{ user.avatar }}"><i class="layui-icon layui-icon-user"></i></a>
-            <a href="javascript:" title="分享到微信"><i class="layui-icon layui-icon-login-wechat icon-wechat"></i></a>
-            <a href="javascript:" title="分享到QQ空间"><i class="layui-icon layui-icon-login-qq icon-qq"></i></a>
-            <a href="javascript:" title="分享到微博"><i class="layui-icon layui-icon-login-weibo icon-weibo"></i></a>
+            <a href="javascript:" title="分享到微信"><i class="layui-icon layui-icon-login-wechat share-wechat"></i></a>
+            <a href="javascript:" title="分享到QQ空间"><i class="layui-icon layui-icon-login-qq share-qq"></i></a>
+            <a href="javascript:" title="分享到微博"><i class="layui-icon layui-icon-login-weibo share-weibo"></i></a>
         </span>
     </div>
 
@@ -96,7 +96,7 @@
         </div>
     </div>
 
-    {% set share_url = full_url({'for':'home.share'},{'id':user.id,'type':'user','referer':auth_user.id}) %}
+    {% set share_url = full_url({'for':'home.share'},{'id':user.id,'type':'user'}) %}
     {% set qrcode_url = url({'for':'home.qrcode'},{'text':share_url}) %}
 
     <div class="layui-hide">

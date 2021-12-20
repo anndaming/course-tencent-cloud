@@ -14,7 +14,7 @@ $error['sys.unauthorized'] = '认证失败';
 $error['sys.forbidden'] = '拒绝访问';
 $error['sys.bad_request'] = '无效的请求';
 $error['sys.not_found'] = '资源不存在';
-$error['sys.internal_server_error'] = '内部错误';
+$error['sys.server_error'] = '服务器内部错误';
 $error['sys.service_unavailable'] = '服务不可用';
 $error['sys.trans_rollback'] = '事务回滚';
 $error['sys.unknown_error'] = '未知错误';
@@ -46,7 +46,8 @@ $error['captcha.invalid_code'] = '无效的验证码';
  * 帐号相关
  */
 $error['account.not_found'] = '账号不存在';
-$error['account.login_block'] = '账号被锁定，无法登录';
+$error['account.locked'] = '账号被锁定，无法登录';
+$error['account.flood_login'] = '帐号泛滥登录';
 $error['account.login_pwd_incorrect'] = '登录密码不正确';
 $error['account.invalid_login_name'] = '无效的登录名';
 $error['account.invalid_email'] = '无效的电子邮箱';
@@ -176,6 +177,7 @@ $error['course.details_too_long'] = '详情太长（多于5000个字符）';
 $error['course.invalid_model'] = '无效的模型类别';
 $error['course.invalid_level'] = '无效的难度级别';
 $error['course.invalid_cover'] = '无效的封面';
+$error['course.invalid_user_count'] = '无效的学员数量（范围：0-999999）';
 $error['course.invalid_origin_price'] = '无效的原始价格（范围：0-999999）';
 $error['course.invalid_market_price'] = '无效的优惠价格（范围：0-999999）';
 $error['course.invalid_vip_price'] = '无效的会员价格（范围：0-999999）';
@@ -184,8 +186,6 @@ $error['course.invalid_refund_expiry'] = '无效的退款期限';
 $error['course.invalid_feature_status'] = '无效的推荐状态';
 $error['course.invalid_publish_status'] = '无效的发布状态';
 $error['course.teacher_not_assigned'] = '尚未指定授课教师';
-$error['course.pub_chapter_not_found'] = '尚未发现已发布的课时';
-$error['course.pub_chapter_not_enough'] = '已发布的课时太少（小于20%）';
 
 /**
  * 面授课程相关
@@ -240,7 +240,7 @@ $error['package.invalid_expiry'] = '无效的期限（范围：1~60）';
 $error['course_user.not_found'] = '课程学员关系不存在';
 $error['course_user.invalid_expiry_time'] = '无效的过期时间';
 $error['course_user.review_not_allowed'] = '当前不允许评价课程';
-$error['course_user.has_joined'] = '已经加入过该课程';
+$error['course_user.has_imported'] = '已经加入过该课程';
 $error['course_user.has_reviewed'] = '已经评价过该课程';
 
 /**
@@ -371,6 +371,7 @@ $error['order.item_not_found'] = '商品不存在';
 $error['order.trade_expired'] = '交易已过期';
 $error['order.has_bought_course'] = '已经购买过该课程';
 $error['order.has_bought_package'] = '已经购买过该套餐';
+$error['order.cancel_not_allowed'] = '当前不允许取消订单';
 $error['order.close_not_allowed'] = '当前不允许关闭订单';
 $error['order.refund_not_allowed'] = '当前不允许申请退款';
 $error['order.refund_item_unsupported'] = '该品类不支持退款';
@@ -465,6 +466,7 @@ $error['im_group_user.not_found'] = '群组关系不存在';
 $error['im_group_user.remark_too_long'] = '验证信息太长（超过30字符）';
 $error['im_group_user.has_joined'] = '已经加入过群组';
 $error['im_group_user.join_not_allowed'] = '当前不允许加入群组';
+$error['im_group_user.owner_quit_not_allowed'] = '当前不允许群主退群';
 $error['im_group_user.delete_owner_not_allowed'] = '当前不允许删除群主';
 
 $error['im_friend_user.not_found'] = '好友关系不存在';

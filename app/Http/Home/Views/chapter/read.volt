@@ -10,9 +10,9 @@
             <a href="{{ course_url }}"><i class="layui-icon layui-icon-return"></i> 返回课程</a>
         </span>
         <span class="share">
-            <a href="javascript:" title="分享到微信"><i class="layui-icon layui-icon-login-wechat icon-wechat"></i></a>
-            <a href="javascript:" title="分享到QQ空间"><i class="layui-icon layui-icon-login-qq icon-qq"></i></a>
-            <a href="javascript:" title="分享到微博"><i class="layui-icon layui-icon-login-weibo icon-weibo"></i></a>
+            <a href="javascript:" title="分享到微信"><i class="layui-icon layui-icon-login-wechat share-wechat"></i></a>
+            <a href="javascript:" title="分享到QQ空间"><i class="layui-icon layui-icon-login-qq share-qq"></i></a>
+            <a href="javascript:" title="分享到微博"><i class="layui-icon layui-icon-login-weibo share-weibo"></i></a>
         </span>
     </div>
 
@@ -43,7 +43,7 @@
         <input type="hidden" name="chapter.learning_url" value="{{ learning_url }}">
     </div>
 
-    {% set share_url = full_url({'for':'home.share'},{'id':chapter.id,'type':'chapter','referer':auth_user.id}) %}
+    {% set share_url = full_url({'for':'home.share'},{'id':chapter.id,'type':'chapter'}) %}
     {% set qrcode_url = url({'for':'home.qrcode'},{'text':share_url}) %}
 
     <div class="layui-hide">

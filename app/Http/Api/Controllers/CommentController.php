@@ -85,27 +85,13 @@ class CommentController extends Controller
 
         $service->handle($id);
 
-        return $this->jsonSuccess(['msg' => '删除评论成功']);
+        return $this->jsonSuccess();
     }
 
     /**
      * @Post("/{id:[0-9]+}/like", name="home.comment.like")
      */
     public function likeAction($id)
-    {
-        $service = new CommentLikeService();
-
-        $data = $service->handle($id);
-
-        $msg = $data['action'] == 'do' ? '点赞成功' : '取消点赞成功';
-
-        return $this->jsonSuccess(['data' => $data, 'msg' => $msg]);
-    }
-
-    /**
-     * @Post("/{id:[0-9]+}/like", name="home.comment.like")
-     */
-    public function unlikeAction($id)
     {
         $service = new CommentLikeService();
 

@@ -33,9 +33,7 @@ class ImActiveGroupList extends Cache
     {
         $groups = $this->findGroups();
 
-        if (empty($groups)) {
-            return [];
-        }
+        if (empty($groups)) return [];
 
         $result = [];
 
@@ -72,6 +70,7 @@ class ImActiveGroupList extends Cache
             ->orderBy('total_count DESC')
             ->where('receiver_type = :type:', ['type' => ImMessageModel::TYPE_GROUP])
             ->betweenWhere('create_time', $startTime, $endTime)
+            ->andWhere('deleted = 0')
             ->limit($limit)
             ->execute();
 

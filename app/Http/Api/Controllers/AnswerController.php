@@ -7,6 +7,7 @@
 
 namespace App\Http\Api\Controllers;
 
+use App\Models\Answer as AnswerModel;
 use App\Services\Logic\Answer\AnswerAccept as AnswerAcceptService;
 use App\Services\Logic\Answer\AnswerCreate as AnswerCreateService;
 use App\Services\Logic\Answer\AnswerDelete as AnswerDeleteService;
@@ -29,6 +30,17 @@ class AnswerController extends Controller
         $service = new AnswerInfoService();
 
         $answer = $service->handle($id);
+
+        if ($answer['deleted'] == 1) {
+            $this->notFound();
+        }
+
+        $approved = $answer['published'] == AnswerModel::PUBLISH_APPROVED;
+        $owned = $answer['me']['owned'] == 1;
+
+        if (!$approved && !$owned) {
+            $this->notFound();
+        }
 
         return $this->jsonSuccess(['answer' => $answer]);
     }
@@ -54,12 +66,11 @@ class AnswerController extends Controller
 
         $answer = $service->handle();
 
-        $content = [
-            'answer' => $answer,
-            'msg' => '创建回答成功',
-        ];
+        $service = new AnswerInfoService();
 
-        return $this->jsonSuccess($content);
+        $answer = $service->handle($answer->id);
+
+        return $this->jsonSuccess(['answer' => $answer]);
     }
 
     /**
@@ -71,12 +82,7 @@ class AnswerController extends Controller
 
         $answer = $service->handle($id);
 
-        $content = [
-            'answer' => $answer,
-            'msg' => '更新回答成功',
-        ];
-
-        return $this->jsonSuccess($content);
+        return $this->jsonSuccess(['answer' => $answer]);
     }
 
     /**
@@ -88,7 +94,7 @@ class AnswerController extends Controller
 
         $service->handle($id);
 
-        return $this->jsonSuccess(['msg' => '删除回答成功']);
+        return $this->jsonSuccess();
     }
 
     /**
@@ -106,37 +112,9 @@ class AnswerController extends Controller
     }
 
     /**
-     * @Post("/{id:[0-9]+}/unaccept", name="api.answer.unaccept")
-     */
-    public function unacceptAction($id)
-    {
-        $service = new AnswerAcceptService();
-
-        $data = $service->handle($id);
-
-        $msg = $data['action'] == 'do' ? '采纳成功' : '取消采纳成功';
-
-        return $this->jsonSuccess(['data' => $data, 'msg' => $msg]);
-    }
-
-    /**
      * @Post("/{id:[0-9]+}/like", name="api.answer.like")
      */
     public function likeAction($id)
-    {
-        $service = new AnswerLikeService();
-
-        $data = $service->handle($id);
-
-        $msg = $data['action'] == 'do' ? '点赞成功' : '取消点赞成功';
-
-        return $this->jsonSuccess(['data' => $data, 'msg' => $msg]);
-    }
-
-    /**
-     * @Post("/{id:[0-9]+}/like", name="api.answer.unlike")
-     */
-    public function unlikeAction($id)
     {
         $service = new AnswerLikeService();
 

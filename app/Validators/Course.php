@@ -166,6 +166,17 @@ class Course extends Validator
         return implode('，', $list);
     }
 
+    public function checkUserCount($userCount)
+    {
+        $value = $this->filter->sanitize($userCount, ['trim', 'int']);
+
+        if ($value < 0 || $value > 999999) {
+            throw new BadRequestException('course.invalid_user_count');
+        }
+
+        return $value;
+    }
+
     public function checkOriginPrice($price)
     {
         $value = $this->filter->sanitize($price, ['trim', 'float']);
@@ -245,29 +256,6 @@ class Course extends Validator
 
         if ($course->teacher_id == 0) {
             throw new BadRequestException('course.teacher_not_assigned');
-        }
-
-        $courseRepo = new CourseRepo();
-
-        $chapters = $courseRepo->findChapters($course->id);
-
-        $totalCount = $publishedCount = 0;
-
-        foreach ($chapters as $chapter) {
-            if ($chapter->parent_id > 0 && $chapter->published == 1) {
-                $publishedCount++;
-            }
-            if ($chapter->parent_id > 0) {
-                $totalCount++;
-            }
-        }
-
-        if ($publishedCount == 0) {
-            throw new BadRequestException('course.pub_chapter_not_found');
-        }
-
-        if ($publishedCount / $totalCount < 0.2) {
-            throw new BadRequestException('course.pub_chapter_not_enough');
         }
     }
 

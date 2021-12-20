@@ -25,13 +25,15 @@ class PublicController extends \Phalcon\Mvc\Controller
     use SecurityTrait;
 
     /**
-     * @Get("/download/{md5}", name="home.download")
+     * @Get("/download/{id}", name="home.download")
      */
-    public function downloadAction($md5)
+    public function downloadAction($id)
     {
+        $id = $this->crypt->decryptBase64($id, null, true);
+
         $repo = new UploadRepo();
 
-        $file = $repo->findByMd5($md5);
+        $file = $repo->findById($id);
 
         if ($file) {
 
@@ -39,7 +41,7 @@ class PublicController extends \Phalcon\Mvc\Controller
 
             $location = $service->getFileUrl($file->path);
 
-            $this->response->redirect($location, true);
+            return $this->response->redirect($location, true);
 
         } else {
 
@@ -54,13 +56,12 @@ class PublicController extends \Phalcon\Mvc\Controller
      */
     public function shareAction()
     {
-        $id = $this->request->getQuery('id', 'int', 0);
-        $type = $this->request->getQuery('type', 'string', 'course');
-        $referer = $this->request->getQuery('referer', 'int', 0);
+        $id = $this->request->getQuery('id', 'int');
+        $type = $this->request->getQuery('type', 'string');
 
         $service = new ShareUrlService();
 
-        $location = $service->handle($id, $type, $referer);
+        $location = $service->handle($id, $type);
 
         return $this->response->redirect($location, true);
     }

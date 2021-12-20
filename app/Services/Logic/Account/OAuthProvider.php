@@ -14,11 +14,16 @@ class OAuthProvider extends LogicService
 
     public function handle()
     {
+        $local = $this->getSettings('oauth.local');
         $weixin = $this->getSettings('oauth.weixin');
         $weibo = $this->getSettings('oauth.weibo');
         $qq = $this->getSettings('oauth.qq');
 
         return [
+            'local' => [
+                'register_with_phone' => $local['register_with_phone'],
+                'register_with_email' => $local['register_with_email'],
+            ],
             'weixin' => ['enabled' => $weixin['enabled']],
             'weibo' => ['enabled' => $weibo['enabled']],
             'qq' => ['enabled' => $qq['enabled']],

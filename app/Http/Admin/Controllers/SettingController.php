@@ -350,10 +350,12 @@ class SettingController extends Controller
             $qqAuth = $settingService->getQQAuthSettings();
             $weixinAuth = $settingService->getWeixinAuthSettings();
             $weiboAuth = $settingService->getWeiboAuthSettings();
+            $localAuth = $settingService->getLocalAuthSettings();
 
             $this->view->setVar('qq_auth', $qqAuth);
             $this->view->setVar('weixin_auth', $weixinAuth);
             $this->view->setVar('weibo_auth', $weiboAuth);
+            $this->view->setVar('local_auth', $localAuth);
         }
     }
 
@@ -406,6 +408,31 @@ class SettingController extends Controller
 
             $this->view->pick('setting/dingtalk_robot');
             $this->view->setVar('robot', $robot);
+        }
+    }
+
+    /**
+     * @Route("/contact", name="admin.setting.contact")
+     */
+    public function contactAction()
+    {
+        $section = 'contact';
+
+        $settingService = new SettingService();
+
+        if ($this->request->isPost()) {
+
+            $data = $this->request->getPost();
+
+            $settingService->updateSettings($section, $data);
+
+            return $this->jsonSuccess(['msg' => '更新配置成功']);
+
+        } else {
+
+            $contact = $settingService->getSettings($section);
+
+            $this->view->setVar('contact', $contact);
         }
     }
 

@@ -8,6 +8,7 @@
 namespace App\Http\Home\Controllers;
 
 use App\Http\Home\Services\Account as AccountService;
+use App\Http\Home\Services\FullH5Url as FullH5UrlService;
 use App\Services\Logic\Account\EmailUpdate as EmailUpdateService;
 use App\Services\Logic\Account\OAuthProvider as OAuthProviderService;
 use App\Services\Logic\Account\PasswordReset as PasswordResetService;
@@ -22,11 +23,22 @@ class AccountController extends Controller
      */
     public function registerAction()
     {
+        $service = new FullH5UrlService();
+
+        if ($service->isMobileBrowser() && $service->h5Enabled()) {
+            $location = $service->getAccountRegisterUrl();
+            return $this->response->redirect($location);
+        }
+
         if ($this->authUser->id > 0) {
-            $this->response->redirect('/');
+            return $this->response->redirect('/');
         }
 
         $returnUrl = $this->request->getHTTPReferer();
+
+        $service = new OAuthProviderService();
+
+        $oauthProvider = $service->handle();
 
         $service = new AccountService();
 
@@ -35,6 +47,7 @@ class AccountController extends Controller
         $this->seo->prependTitle('注册');
 
         $this->view->setVar('return_url', $returnUrl);
+        $this->view->setVar('local_oauth', $oauthProvider['local']);
         $this->view->setVar('captcha', $captcha);
     }
 
@@ -62,8 +75,15 @@ class AccountController extends Controller
      */
     public function loginAction()
     {
+        $service = new FullH5UrlService();
+
+        if ($service->isMobileBrowser() && $service->h5Enabled()) {
+            $location = $service->getAccountLoginUrl();
+            return $this->response->redirect($location);
+        }
+
         if ($this->authUser->id > 0) {
-            $this->response->redirect('/');
+            return $this->response->redirect('/');
         }
 
         $service = new AccountService();
@@ -124,7 +144,7 @@ class AccountController extends Controller
 
         $service->logout();
 
-        $this->response->redirect(['for' => 'home.index']);
+        return $this->response->redirect(['for' => 'home.index']);
     }
 
     /**
@@ -132,8 +152,15 @@ class AccountController extends Controller
      */
     public function forgetPasswordAction()
     {
+        $service = new FullH5UrlService();
+
+        if ($service->isMobileBrowser() && $service->h5Enabled()) {
+            $location = $service->getAccountForgetUrl();
+            return $this->response->redirect($location);
+        }
+
         if ($this->authUser->id > 0) {
-            $this->response->redirect(['for' => 'home.index']);
+            return $this->response->redirect(['for' => 'home.index']);
         }
 
         $service = new AccountService();

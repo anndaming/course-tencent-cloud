@@ -26,7 +26,7 @@ class HelpController extends Controller
             ['type' => CategoryModel::TYPE_HELP]
         );
 
-        $this->response->redirect($location);
+        return $this->response->redirect($location);
     }
 
     /**
@@ -77,7 +77,7 @@ class HelpController extends Controller
      */
     public function editAction($id)
     {
-        $helpService = new HelpService;
+        $helpService = new HelpService();
 
         $categories = $helpService->getCategories();
 

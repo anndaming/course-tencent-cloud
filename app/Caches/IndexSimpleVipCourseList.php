@@ -42,6 +42,13 @@ class IndexSimpleVipCourseList extends Cache
         $result = [];
 
         foreach ($courses as $course) {
+
+            $userCount = $course->user_count;
+
+            if ($course->fake_user_count > $course->user_count) {
+                $userCount = $course->fake_user_count;
+            }
+
             $result[] = [
                 'id' => $course->id,
                 'title' => $course->title,
@@ -50,7 +57,7 @@ class IndexSimpleVipCourseList extends Cache
                 'vip_price' => $course->vip_price,
                 'model' => $course->model,
                 'level' => $course->level,
-                'user_count' => $course->user_count,
+                'user_count' => $userCount,
                 'lesson_count' => $course->lesson_count,
             ];
         }
@@ -65,8 +72,10 @@ class IndexSimpleVipCourseList extends Cache
     protected function findCourses($limit = 8)
     {
         return CourseModel::query()
-            ->where('published = 1')
+            ->where('market_price > vip_price')
             ->andWhere('vip_price >= 0')
+            ->andWhere('published = 1')
+            ->andWhere('deleted = 0')
             ->orderBy('score DESC')
             ->limit($limit)
             ->execute();

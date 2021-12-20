@@ -8,6 +8,7 @@
 namespace App\Http\Home\Controllers;
 
 use App\Http\Home\Services\Answer as AnswerService;
+use App\Http\Home\Services\FullH5Url as FullH5UrlService;
 use App\Http\Home\Services\Question as QuestionService;
 use App\Models\Answer as AnswerModel;
 use App\Services\Logic\Answer\AnswerAccept as AnswerAcceptService;
@@ -53,12 +54,26 @@ class AnswerController extends Controller
      */
     public function showAction($id)
     {
+        $service = new FullH5UrlService();
+
+        if ($service->isMobileBrowser() && $service->h5Enabled()) {
+            $location = $service->getAnswerInfoUrl($id);
+            return $this->response->redirect($location);
+        }
+
         $service = new AnswerInfoService();
 
         $answer = $service->handle($id);
 
-        if ($answer['published'] != AnswerModel::PUBLISH_APPROVED) {
-            return $this->notFound();
+        if ($answer['deleted'] == 1) {
+            $this->notFound();
+        }
+
+        $approved = $answer['published'] == AnswerModel::PUBLISH_APPROVED;
+        $owned = $answer['me']['owned'] == 1;
+
+        if (!$approved && !$owned) {
+            $this->notFound();
         }
 
         $questionId = $answer['question']['id'];
@@ -68,7 +83,7 @@ class AnswerController extends Controller
             ['answer_id' => $id],
         );
 
-        $this->response->redirect($location);
+        return $this->response->redirect($location);
     }
 
     /**

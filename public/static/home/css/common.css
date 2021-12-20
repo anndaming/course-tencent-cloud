@@ -233,25 +233,37 @@
     background: none;
 }
 
+#footer .row {
+    line-height: 18px;
+    margin-bottom: 15px;
+}
+
+#footer .row:last-child {
+    margin-bottom: 0;
+}
+
+#footer .contact {
+    line-height: 24px;
+}
+
 #footer span, #footer a {
     color: #999;
 }
 
-#footer a:hover {
+#footer a:hover,
+#footer .iconfont:hover {
     color: #fff;
 }
 
-.bottom-nav {
-    margin-bottom: 10px;
-    line-height: 18px;
-}
-
-.copyright {
-    line-height: 18px;
-}
-
-.bottom-nav a, .copyright span, .copyright a {
+#footer .nav a,
+#footer .copyright span,
+#footer .copyright a,
+#footer .contact a {
     margin-right: 10px;
+}
+
+#footer .iconfont {
+    font-size: 20px;
 }
 
 .layout-sidebar .loading {
@@ -1017,7 +1029,9 @@
     margin: 0 5px;
 }
 
-.lesson-item .free-badge {
+.lesson-item .icon-trial {
+    color: red;
+    font-size: 24px;
     margin-right: 5px;
 }
 
@@ -1335,10 +1349,14 @@
 }
 
 .player-wrap {
-    position: relative;
     width: 760px;
     height: 428px;
     margin-bottom: 20px;
+}
+
+.dplayer {
+    width: 760px;
+    height: 428px;
 }
 
 .chat-wrap .layui-card-header {
@@ -2068,7 +2086,7 @@
 }
 
 .my-subscribe .qrcode {
-    broder: 3px dashed #666;
+    border: 3px dashed #666;
     margin: 30px auto;
     width: 160px;
     height: 160px;

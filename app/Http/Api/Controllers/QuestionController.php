@@ -7,9 +7,11 @@
 
 namespace App\Http\Api\Controllers;
 
+use App\Models\Question as QuestionModel;
 use App\Services\Logic\Question\AnswerList as AnswerListService;
 use App\Services\Logic\Question\CategoryList as CategoryListService;
 use App\Services\Logic\Question\CommentList as CommentListService;
+use App\Services\Logic\Question\QuestionDelete as QuestionDeleteService;
 use App\Services\Logic\Question\QuestionFavorite as QuestionFavoriteService;
 use App\Services\Logic\Question\QuestionInfo as QuestionInfoService;
 use App\Services\Logic\Question\QuestionLike as QuestionLikeService;
@@ -54,6 +56,17 @@ class QuestionController extends Controller
 
         $question = $service->handle($id);
 
+        if ($question['deleted'] == 1) {
+            $this->notFound();
+        }
+
+        $approved = $question['published'] == QuestionModel::PUBLISH_APPROVED;
+        $owned = $question['me']['owned'] == 1;
+
+        if (!$approved && !$owned) {
+            $this->notFound();
+        }
+
         return $this->jsonSuccess(['question' => $question]);
     }
 
@@ -82,6 +95,18 @@ class QuestionController extends Controller
     }
 
     /**
+     * @Post("/{id:[0-9]+}/delete", name="api.question.delete")
+     */
+    public function deleteAction($id)
+    {
+        $service = new QuestionDeleteService();
+
+        $service->handle($id);
+
+        return $this->jsonSuccess();
+    }
+
+    /**
      * @Post("/{id:[0-9]+}/favorite", name="api.question.favorite")
      */
     public function favoriteAction($id)
@@ -96,37 +121,9 @@ class QuestionController extends Controller
     }
 
     /**
-     * @Post("/{id:[0-9]+}/unfavorite", name="api.question.unfavorite")
-     */
-    public function unfavoriteAction($id)
-    {
-        $service = new QuestionFavoriteService();
-
-        $data = $service->handle($id);
-
-        $msg = $data['action'] == 'do' ? '收藏成功' : '取消收藏成功';
-
-        return $this->jsonSuccess(['data' => $data, 'msg' => $msg]);
-    }
-
-    /**
      * @Post("/{id:[0-9]+}/like", name="api.question.like")
      */
     public function likeAction($id)
-    {
-        $service = new QuestionLikeService();
-
-        $data = $service->handle($id);
-
-        $msg = $data['action'] == 'do' ? '点赞成功' : '取消点赞成功';
-
-        return $this->jsonSuccess(['data' => $data, 'msg' => $msg]);
-    }
-
-    /**
-     * @Post("/{id:[0-9]+}/like", name="api.question.unlike")
-     */
-    public function unlikeAction($id)
     {
         $service = new QuestionLikeService();
 

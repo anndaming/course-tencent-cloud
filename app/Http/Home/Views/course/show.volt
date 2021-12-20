@@ -11,9 +11,9 @@
             <a><cite>{{ course.title }}</cite></a>
         </span>
         <span class="share">
-            <a href="javascript:" title="分享到微信"><i class="layui-icon layui-icon-login-wechat icon-wechat"></i></a>
-            <a href="javascript:" title="分享到QQ空间"><i class="layui-icon layui-icon-login-qq icon-qq"></i></a>
-            <a href="javascript:" title="分享到微博"><i class="layui-icon layui-icon-login-weibo icon-weibo"></i></a>
+            <a href="javascript:" title="分享到微信"><i class="layui-icon layui-icon-login-wechat share-wechat"></i></a>
+            <a href="javascript:" title="分享到QQ空间"><i class="layui-icon layui-icon-login-qq share-qq"></i></a>
+            <a href="javascript:" title="分享到微博"><i class="layui-icon layui-icon-login-weibo share-weibo"></i></a>
         </span>
     </div>
 
@@ -34,8 +34,8 @@
             <div class="course-tab-wrap wrap">
                 <div class="layui-tab layui-tab-brief course-tab">
                     <ul class="layui-tab-title">
-                        <li class="layui-this">目录</li>
-                        <li>详情</li>
+                        <li class="layui-this">详情</li>
+                        <li>目录</li>
                         {% if show_tab_packages %}
                             <li>套餐<span class="tab-count">{{ course.package_count }}</span></li>
                         {% endif %}
@@ -48,10 +48,10 @@
                     </ul>
                     <div class="layui-tab-content">
                         <div class="layui-tab-item layui-show">
-                            {{ partial('course/show_catalog') }}
+                            <div class="course-details markdown-body">{{ course.details }}</div>
                         </div>
                         <div class="layui-tab-item">
-                            <div class="course-details markdown-body">{{ course.details }}</div>
+                            {{ partial('course/show_catalog') }}
                         </div>
                         {% if show_tab_packages %}
                             {% set packages_url = url({'for':'home.course.packages','id':course.id}) %}
@@ -94,7 +94,7 @@
 
     </div>
 
-    {% set share_url = full_url({'for':'home.share'},{'id':course.id,'type':'course','referer':auth_user.id}) %}
+    {% set share_url = full_url({'for':'home.share'},{'id':course.id,'type':'course'}) %}
     {% set qrcode_url = url({'for':'home.qrcode'},{'text':share_url}) %}
 
     <div class="layui-hide">

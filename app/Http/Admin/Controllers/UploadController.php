@@ -9,6 +9,7 @@ namespace App\Http\Admin\Controllers;
 
 use App\Services\MyStorage as StorageService;
 use App\Services\Vod as VodService;
+use App\Validators\Validator as AppValidator;
 
 /**
  * @RoutePrefix("/admin/upload")
@@ -16,46 +17,13 @@ use App\Services\Vod as VodService;
 class UploadController extends Controller
 {
 
-    /**
-     * @Post("/site/logo", name="admin.upload.site_logo")
-     */
-    public function uploadSiteLogoAction()
+    public function initialize()
     {
-        $service = new StorageService();
+        $authUser = $this->getAuthUser();
 
-        $file = $service->uploadSiteLogo();
+        $validator = new AppValidator();
 
-        if (!$file) {
-            return $this->jsonError(['msg' => '上传文件失败']);
-        }
-
-        $data = [
-            'src' => $service->getImageUrl($file->path),
-            'title' => $file->name,
-        ];
-
-        return $this->jsonSuccess(['data' => $data]);
-    }
-
-    /**
-     * @Post("/site/favicon", name="admin.upload.site_favicon")
-     */
-    public function uploadSiteFaviconAction()
-    {
-        $service = new StorageService();
-
-        $file = $service->uploadSiteFavicon();
-
-        if (!$file) {
-            return $this->jsonError(['msg' => '上传文件失败']);
-        }
-
-        $data = [
-            'src' => $service->getImageUrl($file->path),
-            'title' => $file->name,
-        ];
-
-        return $this->jsonSuccess(['data' => $data]);
+        $validator->checkAuthUser($authUser->id);
     }
 
     /**
@@ -137,6 +105,34 @@ class UploadController extends Controller
         $data = [
             'src' => $service->getImageUrl($file->path),
             'title' => $file->name,
+        ];
+
+        return $this->jsonSuccess(['data' => $data]);
+    }
+
+    /**
+     * @Post("/remote/img", name="admin.upload.remote_img")
+     */
+    public function uploadRemoteImageAction()
+    {
+        $originalUrl = $this->request->getPost('url', ['trim', 'string']);
+
+        $service = new StorageService();
+
+        $file = $service->uploadRemoteImage($originalUrl);
+
+        $newUrl = $originalUrl;
+
+        if ($file) {
+            $newUrl = $service->getImageUrl($file->path);
+        }
+
+        /**
+         * 编辑器要求返回的数据结构
+         */
+        $data = [
+            'url' => $newUrl,
+            'originalURL' => $originalUrl,
         ];
 
         return $this->jsonSuccess(['data' => $data]);

@@ -7,6 +7,7 @@
 
 namespace App\Http\Home\Controllers;
 
+use App\Http\Home\Services\FullH5Url as FullH5UrlService;
 use App\Models\ChapterLive as LiveModel;
 use App\Models\Course as CourseModel;
 use App\Services\Logic\Chapter\ChapterInfo as ChapterInfoService;
@@ -39,20 +40,31 @@ class ChapterController extends Controller
      */
     public function showAction($id)
     {
-        $service = new ChapterInfoService();
+        $service = new FullH5UrlService();
 
-        $chapter = $service->handle($id);
-
-        if ($chapter['published'] == 0) {
-            return $this->notFound();
+        if ($service->isMobileBrowser() && $service->h5Enabled()) {
+            $location = $service->getChapterInfoUrl($id);
+            return $this->response->redirect($location);
         }
 
         if ($this->authUser->id == 0) {
             return $this->response->redirect(['for' => 'home.account.login']);
         }
 
+        $service = new ChapterInfoService();
+
+        $chapter = $service->handle($id);
+
+        if ($chapter['deleted'] == 1) {
+            $this->notFound();
+        }
+
+        if ($chapter['published'] == 0) {
+            $this->notFound();
+        }
+
         if ($chapter['me']['owned'] == 0) {
-            return $this->forbidden();
+            $this->forbidden();
         }
 
         $service = new CourseInfoService();

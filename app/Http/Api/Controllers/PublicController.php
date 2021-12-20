@@ -49,8 +49,12 @@ class PublicController extends Controller
 
         $content = [];
 
+        /**
+         * ssl通过nginx转发实现
+         */
         if ($this->request->isSecure()) {
-            $content['connect_url'] = sprintf('wss://%s/wss', $this->request->getHttpHost());
+            list($domain) = explode(':', $websocket->connect_address);
+            $content['connect_url'] = sprintf('wss://%s/wss', $domain);
         } else {
             $content['connect_url'] = sprintf('ws://%s', $websocket->connect_address);
         }
@@ -84,6 +88,24 @@ class PublicController extends Controller
         unset($captcha['secret_key']);
 
         return $this->jsonSuccess(['captcha' => $captcha]);
+    }
+
+    /**
+     * @Get("/payment/info", name="api.public.payment_info")
+     */
+    public function paymentInfoAction()
+    {
+        $service = new AppService();
+
+        $alipay = $service->getSettings('pay.alipay');
+        $wxpay = $service->getSettings('pay.wxpay');
+
+        $content = [
+            'alipay' => ['enabled' => $alipay['enabled']],
+            'wxpay' => ['enabled' => $wxpay['enabled']],
+        ];
+
+        return $this->jsonSuccess($content);
     }
 
     /**

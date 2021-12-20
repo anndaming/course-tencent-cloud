@@ -16,13 +16,21 @@ class PageController extends Controller
 {
 
     /**
-     * @Get("/{id:[0-9]+}/info", name="api.page.info")
+     * @Get("/{id}/info", name="api.page.info")
      */
     public function infoAction($id)
     {
         $service = new PageInfoService();
 
         $page = $service->handle($id);
+
+        if ($page['deleted'] == 1) {
+            $this->notFound();
+        }
+
+        if ($page['published'] == 0) {
+            $this->notFound();
+        }
 
         return $this->jsonSuccess(['page' => $page]);
     }

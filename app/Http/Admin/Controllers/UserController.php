@@ -62,7 +62,7 @@ class UserController extends Controller
         $adminRole = $this->request->getPost('admin_role', 'int', 0);
 
         if ($adminRole == RoleModel::ROLE_ROOT) {
-            $this->response->redirect(['action' => 'list']);
+            return $this->response->redirect(['action' => 'list']);
         }
 
         $userService = new UserService();
@@ -90,13 +90,16 @@ class UserController extends Controller
         $account = $userService->getAccount($id);
         $adminRoles = $userService->getAdminRoles();
 
+        $defaultAvatar = kg_cos_user_avatar_url(null);
+
         if ($user->admin_role == RoleModel::ROLE_ROOT) {
-            $this->response->redirect(['for' => 'admin.user.list']);
+            return $this->response->redirect(['for' => 'admin.user.list']);
         }
 
         $this->view->setVar('user', $user);
         $this->view->setVar('account', $account);
         $this->view->setVar('admin_roles', $adminRoles);
+        $this->view->setVar('default_avatar', $defaultAvatar);
     }
 
     /**
@@ -119,7 +122,7 @@ class UserController extends Controller
         $adminRole = $this->request->getPost('admin_role', 'int', 0);
 
         if ($adminRole == RoleModel::ROLE_ROOT) {
-            $this->response->redirect(['action' => 'list']);
+            return $this->response->redirect(['action' => 'list']);
         }
 
         $type = $this->request->getPost('type', 'string', 'user');

@@ -21,7 +21,7 @@ class ImController extends Controller
         parent::initialize();
 
         if ($this->authUser->id == 0) {
-            $this->response->redirect(['for' => 'home.account.login']);
+            return $this->response->redirect(['for' => 'home.account.login']);
         }
     }
 
@@ -145,7 +145,7 @@ class ImController extends Controller
     }
 
     /**
-     * @Post("/notice/read", name="home.im.read_notice")
+     * @Get("/notice/read", name="home.im.read_notice")
      */
     public function readNoticeAction()
     {
