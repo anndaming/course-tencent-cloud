@@ -4,6 +4,7 @@
 
     {{ partial('macros/course') }}
 
+    {% set category_url = url({'for':'admin.course.category'}) %}
     {% set add_url = url({'for':'admin.course.add'}) %}
     {% set search_url = url({'for':'admin.course.search'}) %}
 
@@ -14,6 +15,9 @@
             </span>
         </div>
         <div class="kg-nav-right">
+            <a class="layui-btn layui-btn-sm" href="{{ category_url }}">
+                <i class="layui-icon layui-icon-add-1"></i>分类管理
+            </a>
             <a class="layui-btn layui-btn-sm" href="{{ add_url }}">
                 <i class="layui-icon layui-icon-add-1"></i>添加课程
             </a>
@@ -73,10 +77,10 @@
                         {% if item.teacher.id is defined %}
                             <span>讲师：{{ item.teacher.name }}</span>
                         {% endif %}
-                        <span>难度：{{ level_info(item.level) }}</span>
+                        <span>难度：{{ level_type(item.level) }}</span>
                     </p>
                     <p class="meta">
-                        <span>类型：{{ model_info(item.model) }}</span>
+                        <span>类型：{{ model_type(item.model) }}</span>
                         <span>评分：{{ item.rating }}</span>
                         <span>创建：{{ date('Y-m-d',item.create_time) }}</span>
                     </p>
