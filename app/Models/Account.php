@@ -100,7 +100,7 @@ class Account extends Model
         $user = new User();
 
         $user->id = $this->id;
-        $user->name = "user:{$this->id}";
+        $user->name = "user_{$this->id}";
 
         if ($user->create() === false) {
             throw new \RuntimeException('Create User Failed');
@@ -112,15 +112,6 @@ class Account extends Model
 
         if ($userBalance->create() === false) {
             throw new \RuntimeException('Create User Balance Failed');
-        }
-
-        $imUser = new ImUser();
-
-        $imUser->id = $user->id;
-        $imUser->name = $user->name;
-
-        if ($imUser->create() === false) {
-            throw new \RuntimeException('Create Im User Failed');
         }
     }
 

@@ -50,20 +50,6 @@ class MyStorage extends Storage
     }
 
     /**
-     * 上传默认群组头像
-     *
-     * @return false|mixed|string
-     */
-    public function uploadDefaultGroupAvatar()
-    {
-        $filename = static_path('admin/img/default/group_avatar.png');
-
-        $key = '/img/default/group_avatar.png';
-
-        return $this->putFile($key, $filename);
-    }
-
-    /**
      * 上传默认课程封面
      *
      * @return false|mixed|string
@@ -167,26 +153,6 @@ class MyStorage extends Storage
     public function uploadResource()
     {
         return $this->upload('/resource/', self::MIME_FILE, UploadModel::TYPE_RESOURCE);
-    }
-
-    /**
-     * 上传im图片
-     *
-     * @return UploadModel|bool
-     */
-    public function uploadImImage()
-    {
-        return $this->upload('/im/img/', self::MIME_IMAGE, UploadModel::TYPE_IM_IMG);
-    }
-
-    /**
-     * 上传im文件
-     *
-     * @return UploadModel|bool
-     */
-    public function uploadImFile()
-    {
-        return $this->upload('/im/file/', self::MIME_FILE, UploadModel::TYPE_IM_FILE);
     }
 
     /**

@@ -1,3 +1,39 @@
+### [v1.5.7](https://gitee.com/koogua/course-tencent-cloud/releases/v1.5.7)(2022-08-28)
+
+- 清理群组残留
+- 优化HtmlPurifier缓存目录自动创建
+
+### [v1.5.6](https://gitee.com/koogua/course-tencent-cloud/releases/v1.5.6)(2022-08-08)
+
+- 增加应用内命令行migrations
+- 移除群组和微聊模块
+- kindeditor替换vditor
+- markdown转html
+
+### [v1.5.5](https://gitee.com/koogua/course-tencent-cloud/releases/v1.5.5)(2022-07-27)
+
+- 修正获分类查询条件
+- 修正锁定账户还能登录的问题
+- 发货增加noMatchedHandler
+- 增加demo数据清理脚本
+- 用户课程列表增加角色限定条件
+- 精简模块加载和路由扫描
+- 优化CsrfToken
+- 去除无实质作用的数据表优化
+
+### [v1.5.4](https://gitee.com/koogua/course-tencent-cloud/releases/v1.5.4)(2022-06-15)
+
+- 增加migration助手SettingTrait
+- 增加积分兑换会员
+- 增加ISP备案和电子执照配置
+- 增加获取视频时长补偿机制
+- 优化课程和套餐发货
+- 优化验证码
+- 优化视频点播回调处理任务
+- 优化章节排序初始值和步长
+- 优化后台视频上传和转码
+- 修正获取子分类查询条件
+
 ### [v1.5.3](https://gitee.com/koogua/course-tencent-cloud/releases/v1.5.3)(2022-05-30)
 
 - 优化章节排序初始值和步长

@@ -9,17 +9,20 @@ namespace App\Services\Logic\Deliver;
 
 use App\Models\Course as CourseModel;
 use App\Models\CourseUser as CourseUserModel;
-use App\Models\ImGroupUser as ImGroupUserModel;
 use App\Models\User as UserModel;
-use App\Repos\ImGroup as ImGroupRepo;
-use App\Repos\ImGroupUser as ImGroupUserRepo;
-use App\Repos\ImUser as ImUserRepo;
+use App\Repos\CourseUser as CourseUserRepo;
 use App\Services\Logic\Service as LogicService;
 
 class CourseDeliver extends LogicService
 {
 
     public function handle(CourseModel $course, UserModel $user)
+    {
+        $this->revokeCourseUser($course, $user);
+        $this->handleCourseUser($course, $user);
+    }
+
+    protected function handleCourseUser(CourseModel $course, UserModel $user)
     {
         if ($course->model == CourseModel::MODEL_OFFLINE) {
             $expiryTime = strtotime($course->attrs['end_date']);
@@ -28,7 +31,6 @@ class CourseDeliver extends LogicService
         }
 
         $courseUser = new CourseUserModel();
-
         $courseUser->user_id = $user->id;
         $courseUser->course_id = $course->id;
         $courseUser->expiry_time = $expiryTime;
@@ -39,31 +41,23 @@ class CourseDeliver extends LogicService
         $course->user_count += 1;
         $course->update();
 
-        $groupRepo = new ImGroupRepo();
+        $user->course_count += 1;
+        $user->update();
+    }
 
-        $group = $groupRepo->findByCourseId($course->id);
+    protected function revokeCourseUser(CourseModel $course, UserModel $user)
+    {
+        $courseUserRepo = new CourseUserRepo();
 
-        $imUserRepo = new ImUserRepo();
+        $relations = $courseUserRepo->findByCourseAndUserId($course->id, $user->id);
 
-        $imUser = $imUserRepo->findById($user->id);
+        if ($relations->count() == 0) return;
 
-        $groupUserRepo = new ImGroupUserRepo();
-
-        $groupUser = $groupUserRepo->findGroupUser($group->id, $user->id);
-
-        if (!$groupUser) {
-
-            $groupUser = new ImGroupUserModel();
-
-            $groupUser->group_id = $group->id;
-            $groupUser->user_id = $user->id;
-            $groupUser->create();
-
-            $imUser->group_count += 1;
-            $imUser->update();
-
-            $group->user_count += 1;
-            $group->update();
+        foreach ($relations as $relation) {
+            if ($relation->deleted == 0) {
+                $relation->deleted = 1;
+                $relation->update();
+            }
         }
     }
 
